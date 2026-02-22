@@ -10,8 +10,10 @@ import com.alura.forohub.repository.TopicoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.alura.forohub.dto.DatosDetalleTopico;
+import com.alura.forohub.dto.DatosActualizacionTopico;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class TopicoService {
@@ -53,5 +55,39 @@ public class TopicoService {
                 .orElseThrow(() -> new RuntimeException("Tópico no encontrado"));
 
         return new DatosDetalleTopico(topico);
+    }
+
+    public DatosDetalleTopico actualizar(Long id, DatosActualizacionTopico datos) {
+
+        Optional<Topico> optionalTopico = repository.findById(id);
+
+        if (optionalTopico.isEmpty()) {
+            throw new RuntimeException("Tópico no encontrado");
+        }
+
+        if (repository.existsByTituloAndMensaje(datos.titulo(), datos.mensaje())) {
+            throw new RuntimeException("Ya existe un tópico con ese título y mensaje");
+        }
+
+        Topico topico = optionalTopico.get();
+
+        topico.setTitulo(datos.titulo());
+        topico.setMensaje(datos.mensaje());
+        topico.setAutor(datos.autor());
+        topico.setCurso(datos.curso());
+
+        repository.save(topico);
+
+        return new DatosDetalleTopico(topico);
+    }
+    public void eliminar(Long id) {
+
+        Optional<Topico> optionalTopico = repository.findById(id);
+
+        if (optionalTopico.isEmpty()) {
+            throw new RuntimeException("Tópico no encontrado");
+        }
+
+        repository.deleteById(id);
     }
 }

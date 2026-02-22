@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import com.alura.forohub.dto.DatosDetalleTopico;
+import com.alura.forohub.dto.DatosActualizacionTopico;
 
 
 @RestController
@@ -47,5 +48,21 @@ public class TopicoController {
         DatosDetalleTopico datos = service.detallar(id);
 
         return ResponseEntity.ok(datos);
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<DatosDetalleTopico> actualizar(
+            @PathVariable Long id,
+            @RequestBody @Valid DatosActualizacionTopico datos) {
+
+        DatosDetalleTopico actualizado = service.actualizar(id, datos);
+
+        return ResponseEntity.ok(actualizado);
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity eliminar(@PathVariable Long id) {
+
+        service.eliminar(id);
+
+        return ResponseEntity.noContent().build();
     }
 }
